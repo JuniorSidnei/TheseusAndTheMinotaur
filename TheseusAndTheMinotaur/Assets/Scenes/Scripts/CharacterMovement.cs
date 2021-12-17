@@ -86,6 +86,7 @@ namespace TheseusAndMinotaur.Player {
             }
             else {
                 var minotaur = GetComponent<MinotaurController>();
+                minotaur.CheckIfReachedPlayerPosition();
                 
                 //validate the number of movements for minotaur
                 if (minotaur.NumberOfMovements == 0) {

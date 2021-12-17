@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TheseusAndMinotaur.Character;
 using TheseusAndMinotaur.Player;
 using TMPro;
 using UnityEngine;
@@ -17,6 +18,13 @@ namespace TheseusAndMinotaur.Managers {
 
         public TextMeshProUGUI TurnText;
         
+
+        [Header("finish game settings")]
+        public TextMeshProUGUI FinishText;
+        public Color LooseTextColor;
+        public Color WinTextColor;
+        public GameObject Finish;
+        
         public static GameManager Instance;
 
         public delegate void OnMovementInput(Vector2Int inputMovement);
@@ -24,7 +32,7 @@ namespace TheseusAndMinotaur.Managers {
         
         public delegate void OnMinotaurTurn();
         public static event OnMinotaurTurn OnMinotaurMoveTurn;
-        
+
         private InputActions m_inputActions;
 
         private CharacterTurn m_characterTurn;
@@ -44,6 +52,9 @@ namespace TheseusAndMinotaur.Managers {
             //subscribe finish turn event
             CharacterMovement.OnFinishTurn += OnFinishTurn;
 
+            //subscribe to minotaur win event
+            MinotaurController.OnMinotaurWins += OnMinotaurWins;
+            
             m_characterTurn = CharacterTurn.TheseusTurn;
             TurnText.SetText("IT'S: " + m_characterTurn);
         }
@@ -54,6 +65,7 @@ namespace TheseusAndMinotaur.Managers {
 
         private void RestartGame(InputAction.CallbackContext ctx) {
             SceneManager.LoadScene("Level_01");
+            m_inputActions.Player.player_movement.Enable();
         }
         
         private void InputMovement(InputAction.CallbackContext ctx) {
@@ -69,6 +81,13 @@ namespace TheseusAndMinotaur.Managers {
             if (m_characterTurn == CharacterTurn.TheseusTurn) return;
             
             OnMinotaurMoveTurn?.Invoke();
+        }
+
+        private void OnMinotaurWins() {
+            m_inputActions.Player.player_movement.Disable();
+            Finish.gameObject.SetActive(true);
+            FinishText.color = LooseTextColor;
+            FinishText.text = "LOST - MINOTAUR GOT YOU!";
         }
     }
 }
