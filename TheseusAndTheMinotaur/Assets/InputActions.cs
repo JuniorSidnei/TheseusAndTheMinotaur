@@ -25,6 +25,14 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""restart"",
+                    ""type"": ""Button"",
+                    ""id"": ""57275b22-5f67-48dd-b049-861b605d2084"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -82,6 +90,17 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""action"": ""player_movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""83ddd17e-665e-45b4-94dd-c149138c128b"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""restart"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -91,6 +110,7 @@ public class @InputActions : IInputActionCollection, IDisposable
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_player_movement = m_Player.FindAction("player_movement", throwIfNotFound: true);
+        m_Player_restart = m_Player.FindAction("restart", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -141,11 +161,13 @@ public class @InputActions : IInputActionCollection, IDisposable
     private readonly InputActionMap m_Player;
     private IPlayerActions m_PlayerActionsCallbackInterface;
     private readonly InputAction m_Player_player_movement;
+    private readonly InputAction m_Player_restart;
     public struct PlayerActions
     {
         private @InputActions m_Wrapper;
         public PlayerActions(@InputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @player_movement => m_Wrapper.m_Player_player_movement;
+        public InputAction @restart => m_Wrapper.m_Player_restart;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -158,6 +180,9 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @player_movement.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPlayer_movement;
                 @player_movement.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPlayer_movement;
                 @player_movement.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPlayer_movement;
+                @restart.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRestart;
+                @restart.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRestart;
+                @restart.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRestart;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -165,6 +190,9 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @player_movement.started += instance.OnPlayer_movement;
                 @player_movement.performed += instance.OnPlayer_movement;
                 @player_movement.canceled += instance.OnPlayer_movement;
+                @restart.started += instance.OnRestart;
+                @restart.performed += instance.OnRestart;
+                @restart.canceled += instance.OnRestart;
             }
         }
     }
@@ -172,5 +200,6 @@ public class @InputActions : IInputActionCollection, IDisposable
     public interface IPlayerActions
     {
         void OnPlayer_movement(InputAction.CallbackContext context);
+        void OnRestart(InputAction.CallbackContext context);
     }
 }
