@@ -33,6 +33,30 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""next_level"",
+                    ""type"": ""Button"",
+                    ""id"": ""3cb52bca-e9ed-4112-9f4d-d801765acf8f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""wait_action"",
+                    ""type"": ""Button"",
+                    ""id"": ""9dc1c894-a754-4481-9e85-b4eac5d49cc8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""undo_action"",
+                    ""type"": ""Button"",
+                    ""id"": ""d6a9a75b-092b-48b8-9e00-7abf4e414a75"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -101,6 +125,39 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""action"": ""restart"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7a110c4f-d95f-4ffe-a44d-befada6406c7"",
+                    ""path"": ""<Keyboard>/n"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""next_level"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c75f8b75-ced1-4d0f-97bd-09224eb11b11"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""wait_action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bc1f7da0-1073-4e41-b6d2-a618c84fc6d2"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""undo_action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -111,6 +168,9 @@ public class @InputActions : IInputActionCollection, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_player_movement = m_Player.FindAction("player_movement", throwIfNotFound: true);
         m_Player_restart = m_Player.FindAction("restart", throwIfNotFound: true);
+        m_Player_next_level = m_Player.FindAction("next_level", throwIfNotFound: true);
+        m_Player_wait_action = m_Player.FindAction("wait_action", throwIfNotFound: true);
+        m_Player_undo_action = m_Player.FindAction("undo_action", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -162,12 +222,18 @@ public class @InputActions : IInputActionCollection, IDisposable
     private IPlayerActions m_PlayerActionsCallbackInterface;
     private readonly InputAction m_Player_player_movement;
     private readonly InputAction m_Player_restart;
+    private readonly InputAction m_Player_next_level;
+    private readonly InputAction m_Player_wait_action;
+    private readonly InputAction m_Player_undo_action;
     public struct PlayerActions
     {
         private @InputActions m_Wrapper;
         public PlayerActions(@InputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @player_movement => m_Wrapper.m_Player_player_movement;
         public InputAction @restart => m_Wrapper.m_Player_restart;
+        public InputAction @next_level => m_Wrapper.m_Player_next_level;
+        public InputAction @wait_action => m_Wrapper.m_Player_wait_action;
+        public InputAction @undo_action => m_Wrapper.m_Player_undo_action;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -183,6 +249,15 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @restart.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRestart;
                 @restart.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRestart;
                 @restart.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRestart;
+                @next_level.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnNext_level;
+                @next_level.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnNext_level;
+                @next_level.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnNext_level;
+                @wait_action.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWait_action;
+                @wait_action.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWait_action;
+                @wait_action.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnWait_action;
+                @undo_action.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUndo_action;
+                @undo_action.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUndo_action;
+                @undo_action.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUndo_action;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -193,6 +268,15 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @restart.started += instance.OnRestart;
                 @restart.performed += instance.OnRestart;
                 @restart.canceled += instance.OnRestart;
+                @next_level.started += instance.OnNext_level;
+                @next_level.performed += instance.OnNext_level;
+                @next_level.canceled += instance.OnNext_level;
+                @wait_action.started += instance.OnWait_action;
+                @wait_action.performed += instance.OnWait_action;
+                @wait_action.canceled += instance.OnWait_action;
+                @undo_action.started += instance.OnUndo_action;
+                @undo_action.performed += instance.OnUndo_action;
+                @undo_action.canceled += instance.OnUndo_action;
             }
         }
     }
@@ -201,5 +285,8 @@ public class @InputActions : IInputActionCollection, IDisposable
     {
         void OnPlayer_movement(InputAction.CallbackContext context);
         void OnRestart(InputAction.CallbackContext context);
+        void OnNext_level(InputAction.CallbackContext context);
+        void OnWait_action(InputAction.CallbackContext context);
+        void OnUndo_action(InputAction.CallbackContext context);
     }
 }

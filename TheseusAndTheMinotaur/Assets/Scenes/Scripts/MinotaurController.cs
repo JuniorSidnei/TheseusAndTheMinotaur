@@ -18,9 +18,14 @@ namespace TheseusAndMinotaur.Character {
         public PlayerController PlayerController;
         
         private int m_numberOfMovements = 1;
-        private Vector2Int m_lastTartPosition;
+        private Vector2Int m_lastTargetPosition;
+        private Vector2Int m_lastMinotaurPosition;
 
-        public Vector2Int LastTargetPosition => m_lastTartPosition;
+        public Vector2Int LastTargetPosition => m_lastTargetPosition;
+        public Vector2Int LastMinotaurPosition {
+            get =>  m_lastMinotaurPosition;
+            set => m_lastMinotaurPosition = value;
+        }
 
         public int NumberOfMovements {
             get => m_numberOfMovements;
@@ -28,41 +33,50 @@ namespace TheseusAndMinotaur.Character {
         }
         
         private void Awake() {
-            CharacterMovement.Type = CharacterType.Minotaur;
+            characterMovement.Type = CharacterType.Minotaur;
             
             //subscribe finish turn event
             GameManager.OnMinotaurMoveTurn += MoveMinotaur;
+            
+            //subscribe to undo event
+            GameManager.OnUndoMovementAction += OnUndoMovement;
         }
         
         private void MoveMinotaur() {
             var direction = DirectionToMove();
-            CharacterMovement.OnMoveToDirection(direction);
+            characterMovement.OnMoveToDirection(direction);
         }
 
-        public void CheckIfReachedPlayerPosition() {
-            if (m_lastTartPosition == CharacterMovement.CurrentPosition) {
-                OnMinotaurWins?.Invoke();
-            }
+        private void OnUndoMovement() {
+            characterMovement.OnUndoMove();       
+        }
+        
+        public bool CheckIfReachedPlayerPosition() {
+            if (m_lastTargetPosition != characterMovement.CurrentPosition) return false;
+            
+            OnMinotaurWins?.Invoke();
+            return true;
+
         }
         
         private Vector2Int DirectionToMove() {
             //get player current pos
             var targetPosition = PlayerController.CurrentPosition();
-            m_lastTartPosition = targetPosition;
+            m_lastTargetPosition = targetPosition;
             
             var directionX = Vector2Int.zero;
             var directionY = Vector2Int.zero;
             
             //Set the current direction on each axis
-            directionX = targetPosition.x > CharacterMovement.CurrentPosition.x ? Vector2Int.right : Vector2Int.left;
-            directionY = targetPosition.y > CharacterMovement.CurrentPosition.y ? Vector2Int.up : Vector2Int.down;
+            directionX = targetPosition.x > characterMovement.CurrentPosition.x ? Vector2Int.right : Vector2Int.left;
+            directionY = targetPosition.y > characterMovement.CurrentPosition.y ? Vector2Int.up : Vector2Int.down;
 
             //if its the same position in X axis, just move up and down
-            if (CharacterMovement.CurrentPosition.x == targetPosition.x) {
+            if (characterMovement.CurrentPosition.x == targetPosition.x) {
                 return directionY;
             }
             
-            return !CharacterMovement.BoxCollisionManager.CanIMoveInDirection(directionX) ? directionY : directionX;
+            return !characterMovement.BoxCollisionManager.CanIMoveInDirection(directionX) ? directionY : directionX;
         }
     }
 }

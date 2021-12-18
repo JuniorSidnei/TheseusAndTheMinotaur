@@ -16,9 +16,10 @@ namespace TheseusAndMinotaur.Managers {
             MinotaurTurn
         }
 
+        public int CurrentLevel;
+        public int NextLevel;
         public TextMeshProUGUI TurnText;
         
-
         [Header("finish game settings")]
         public TextMeshProUGUI FinishText;
         public Color LooseTextColor;
@@ -29,6 +30,12 @@ namespace TheseusAndMinotaur.Managers {
 
         public delegate void OnMovementInput(Vector2Int inputMovement);
         public static event OnMovementInput OnMoveToDirection;
+        
+        public delegate void OnWaitAction();
+        public static event OnWaitAction OnWaitPlayerAction;
+        
+        public delegate void OnUndoAction();
+        public static event OnUndoAction OnUndoMovementAction;
         
         public delegate void OnMinotaurTurn();
         public static event OnMinotaurTurn OnMinotaurMoveTurn;
@@ -49,11 +56,20 @@ namespace TheseusAndMinotaur.Managers {
             //subscribe to restart event
             m_inputActions.Player.restart.performed += RestartGame;
             
+            //subscribe to wait event
+            m_inputActions.Player.wait_action.performed += WaitAction;
+            
+            //subscrite to undo action 
+            m_inputActions.Player.undo_action.performed += UndoAction;
+            
             //subscribe finish turn event
             CharacterMovement.OnFinishTurn += OnFinishTurn;
 
             //subscribe to minotaur win event
             MinotaurController.OnMinotaurWins += OnMinotaurWins;
+            
+            //subscribe to player win event
+            CharacterMovement.OnPlayerWins += OnPlayerWins;
             
             m_characterTurn = CharacterTurn.TheseusTurn;
             TurnText.SetText("IT'S: " + m_characterTurn);
@@ -64,8 +80,18 @@ namespace TheseusAndMinotaur.Managers {
         }
 
         private void RestartGame(InputAction.CallbackContext ctx) {
-            SceneManager.LoadScene("Level_01");
+            SceneManager.LoadScene(string.Format("Level_{0}", CurrentLevel));
             m_inputActions.Player.player_movement.Enable();
+        }
+
+        private void WaitAction(InputAction.CallbackContext ctx) {
+            if (m_characterTurn == CharacterTurn.MinotaurTurn) return;
+            
+            OnWaitPlayerAction?.Invoke();
+        }
+
+        private void UndoAction(InputAction.CallbackContext ctx) {
+            OnUndoMovementAction?.Invoke();
         }
         
         private void InputMovement(InputAction.CallbackContext ctx) {
@@ -88,6 +114,13 @@ namespace TheseusAndMinotaur.Managers {
             Finish.gameObject.SetActive(true);
             FinishText.color = LooseTextColor;
             FinishText.text = "LOST - MINOTAUR GOT YOU!";
+        }
+
+        private void OnPlayerWins() {
+            m_inputActions.Player.player_movement.Disable();
+            Finish.gameObject.SetActive(true);
+            FinishText.color = WinTextColor;
+            FinishText.text = "WIN - YOU HAVE ESCAPED!";
         }
     }
 }

@@ -20,6 +20,30 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "next_level",
+                    "type": "Button",
+                    "id": "3cb52bca-e9ed-4112-9f4d-d801765acf8f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "wait_action",
+                    "type": "Button",
+                    "id": "9dc1c894-a754-4481-9e85-b4eac5d49cc8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "undo_action",
+                    "type": "Button",
+                    "id": "d6a9a75b-092b-48b8-9e00-7abf4e414a75",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -86,6 +110,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "restart",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7a110c4f-d95f-4ffe-a44d-befada6406c7",
+                    "path": "<Keyboard>/n",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "next_level",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c75f8b75-ced1-4d0f-97bd-09224eb11b11",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "wait_action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bc1f7da0-1073-4e41-b6d2-a618c84fc6d2",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "undo_action",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

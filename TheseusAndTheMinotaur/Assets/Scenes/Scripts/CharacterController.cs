@@ -14,8 +14,9 @@ namespace TheseusAndMinotaur.Character {
             Minotaur
         }
         
-        public CharacterMovement CharacterMovement;
+        public CharacterMovement characterMovement;
         public int ID;
         public CharacterType CharType;
+        
     }
 }

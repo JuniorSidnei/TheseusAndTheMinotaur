@@ -7,24 +7,28 @@ namespace TheseusAndMinotaur.Character {
 
     public class PlayerController : CharacterController {
 
-        
-        public delegate void OnPlayerWin();
-        public static event OnPlayerWin OnPlayerWins;
-        
         private void Awake() {
             //subscribe the input event with values
             GameManager.OnMoveToDirection += OnMoveToDirection;
-            CharacterMovement.Type = CharacterType.Theseus;
-        }
 
+            //subscribe to undo event
+            GameManager.OnUndoMovementAction += OnUndoMovement;
+            
+            characterMovement.Type = CharacterType.Theseus;
+        }
+        
         private void OnMoveToDirection(Vector2Int direction) {
             if (GameManager.Instance.GetCurrentTurn() == GameManager.CharacterTurn.MinotaurTurn) return;
             
-            CharacterMovement.OnMoveToDirection(direction);
+            characterMovement.OnMoveToDirection(direction);
         }
 
+        private void OnUndoMovement() {
+            characterMovement.OnUndoMove();       
+        }
+        
         public Vector2Int CurrentPosition() {
-            return CharacterMovement.CurrentPosition;
+            return characterMovement.CurrentPosition;
         }
     }
 }
