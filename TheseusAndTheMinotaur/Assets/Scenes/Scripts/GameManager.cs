@@ -20,6 +20,7 @@ namespace TheseusAndMinotaur.Managers {
         public int NextLevelID;
         public int PreviousLevelID;
         public TextMeshProUGUI TurnText;
+        public TextMeshProUGUI NoLevelAdviseText;
         
         [Header("finish game settings")]
         public TextMeshProUGUI FinishText;
@@ -135,12 +136,20 @@ namespace TheseusAndMinotaur.Managers {
         }
 
         private void NextLevel(InputAction.CallbackContext ctx) {
-            if (NextLevelID == 0) return;
+            if (NextLevelID == 0) {
+                NoLevelAdviseText.gameObject.SetActive(true);
+                Invoke("HideAdviseText", 0.2f);
+                return;
+            }
             SceneManager.LoadScene(string.Format("Level_{0}", NextLevelID));  
         }
         
         private void PreviousLevel(InputAction.CallbackContext ctx) {
-            if (PreviousLevelID == 0) return;
+            if (PreviousLevelID == 0) {
+                NoLevelAdviseText.gameObject.SetActive(true);
+                Invoke("HideAdviseText", 0.2f);
+                return;
+            }
             SceneManager.LoadScene(string.Format("Level_{0}", PreviousLevelID));  
         }
         
@@ -171,6 +180,10 @@ namespace TheseusAndMinotaur.Managers {
             Finish.gameObject.SetActive(true);
             FinishText.color = WinTextColor;
             FinishText.text = "WIN - YOU HAVE ESCAPED!";
+        }
+
+        private void HideAdviseText() {
+            NoLevelAdviseText.gameObject.SetActive(false);
         }
     }
 }
