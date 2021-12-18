@@ -51,6 +51,13 @@ namespace TheseusAndMinotaur.Managers {
             m_inputActions = new InputActions();
             m_inputActions.Enable();
 
+           
+            
+            m_characterTurn = CharacterTurn.TheseusTurn;
+            TurnText.SetText("IT'S: " + m_characterTurn);
+        }
+
+        public void OnEnable() {
             //subscribe action movement event
             m_inputActions.Player.player_movement.performed += InputMovement;
             
@@ -67,7 +74,7 @@ namespace TheseusAndMinotaur.Managers {
             m_inputActions.Player.next_level.performed += NextLevel;
             
             //subscribe to previous level
-            m_inputActions.Player.undo_action.performed += PreviousLevel;
+            m_inputActions.Player.previous_level.performed += PreviousLevel;
             
             //subscribe finish turn event
             CharacterMovement.OnFinishTurn += OnFinishTurn;
@@ -76,12 +83,38 @@ namespace TheseusAndMinotaur.Managers {
             MinotaurController.OnMinotaurWins += OnMinotaurWins;
             
             //subscribe to player win event
-            CharacterMovement.OnPlayerWins += OnPlayerWins;
-            
-            m_characterTurn = CharacterTurn.TheseusTurn;
-            TurnText.SetText("IT'S: " + m_characterTurn);
+            CharacterMovement.OnPlayerWins += OnPlayerWins; 
         }
-        
+
+        public void OnDisable() {
+            //unsubscribe action movement event
+            m_inputActions.Player.player_movement.performed -= InputMovement;
+            
+            //unsubscribe to restart event
+            m_inputActions.Player.restart.performed -= RestartGame;
+            
+            //unsubscribe to wait event
+            m_inputActions.Player.wait_action.performed -= WaitAction;
+            
+            //unsubscribe to undo action 
+            m_inputActions.Player.undo_action.performed -= UndoAction;
+            
+            //unsubscribe to next level
+            m_inputActions.Player.next_level.performed -= NextLevel;
+            
+            //unsubscribe to previous level
+            m_inputActions.Player.previous_level.performed -= PreviousLevel;
+            
+            //unsubscribe finish turn event
+            CharacterMovement.OnFinishTurn -= OnFinishTurn;
+
+            //unsubscribe to minotaur win event
+            MinotaurController.OnMinotaurWins -= OnMinotaurWins;
+            
+            //unsubscribe to player win event
+            CharacterMovement.OnPlayerWins -= OnPlayerWins; 
+        }
+
         public CharacterTurn GetCurrentTurn() {
             return m_characterTurn;
         }
@@ -102,12 +135,12 @@ namespace TheseusAndMinotaur.Managers {
         }
 
         private void NextLevel(InputAction.CallbackContext ctx) {
+            if (NextLevelID == 0) return;
             SceneManager.LoadScene(string.Format("Level_{0}", NextLevelID));  
         }
         
         private void PreviousLevel(InputAction.CallbackContext ctx) {
             if (PreviousLevelID == 0) return;
-            
             SceneManager.LoadScene(string.Format("Level_{0}", PreviousLevelID));  
         }
         

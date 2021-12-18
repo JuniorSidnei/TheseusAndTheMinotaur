@@ -34,14 +34,24 @@ namespace TheseusAndMinotaur.Character {
         
         private void Awake() {
             characterMovement.Type = CharacterType.Minotaur;
-            
+        }
+
+        private void OnEnable() {
             //subscribe finish turn event
             GameManager.OnMinotaurMoveTurn += MoveMinotaur;
             
             //subscribe to undo event
             GameManager.OnUndoMovementAction += OnUndoMovement;
         }
-        
+
+        private void OnDisable() {
+            //unsubscribe finish turn event
+            GameManager.OnMinotaurMoveTurn -= MoveMinotaur;
+            
+            //unsubscribe to undo event
+            GameManager.OnUndoMovementAction -= OnUndoMovement;
+        }
+
         private void MoveMinotaur() {
             var direction = DirectionToMove();
             characterMovement.OnMoveToDirection(direction);

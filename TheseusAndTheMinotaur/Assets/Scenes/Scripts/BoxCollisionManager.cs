@@ -9,11 +9,7 @@ namespace TheseusAndMinotaur {
 
         public LayerMask ObjectLayer;
         public SpriteRenderer SpriteRend;
-
-        private void Awake() {
-            SpriteRend = GetComponent<SpriteRenderer>();
-        }
-
+        
         public bool CanIMoveInDirection(Vector2Int direction) {
             //if it has more than one collider, player cannot move
             return CreateBoxWithDirection(direction) < 1;
