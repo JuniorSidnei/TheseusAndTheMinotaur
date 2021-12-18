@@ -7,6 +7,10 @@ namespace TheseusAndMinotaur.Character {
 
     public class PlayerController : CharacterController {
 
+        
+        public delegate void OnPlayerWin();
+        public static event OnPlayerWin OnPlayerWins;
+        
         private void Awake() {
             //subscribe the input event with values
             GameManager.OnMoveToDirection += OnMoveToDirection;

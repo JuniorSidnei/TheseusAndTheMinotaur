@@ -82,6 +82,11 @@ namespace TheseusAndMinotaur.Player {
 
             //when finish turn, validate the next turn
             if (m_type == CharacterController.CharacterType.Theseus) {
+                if (CurrentPosition == LevelManager.EndGamePosition)
+                {
+                    //invoke event to win game
+                }
+                
                 OnFinishTurn?.Invoke(GameManager.CharacterTurn.MinotaurTurn);
             }
             else {
