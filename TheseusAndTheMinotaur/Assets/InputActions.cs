@@ -57,6 +57,14 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""previous_level"",
+                    ""type"": ""Button"",
+                    ""id"": ""4b850e7c-0b29-4265-aab4-3edd4c031329"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -158,6 +166,17 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""action"": ""undo_action"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4ee95727-1034-4f57-a091-376abb0e97a1"",
+                    ""path"": ""<Keyboard>/p"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""previous_level"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -171,6 +190,7 @@ public class @InputActions : IInputActionCollection, IDisposable
         m_Player_next_level = m_Player.FindAction("next_level", throwIfNotFound: true);
         m_Player_wait_action = m_Player.FindAction("wait_action", throwIfNotFound: true);
         m_Player_undo_action = m_Player.FindAction("undo_action", throwIfNotFound: true);
+        m_Player_previous_level = m_Player.FindAction("previous_level", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -225,6 +245,7 @@ public class @InputActions : IInputActionCollection, IDisposable
     private readonly InputAction m_Player_next_level;
     private readonly InputAction m_Player_wait_action;
     private readonly InputAction m_Player_undo_action;
+    private readonly InputAction m_Player_previous_level;
     public struct PlayerActions
     {
         private @InputActions m_Wrapper;
@@ -234,6 +255,7 @@ public class @InputActions : IInputActionCollection, IDisposable
         public InputAction @next_level => m_Wrapper.m_Player_next_level;
         public InputAction @wait_action => m_Wrapper.m_Player_wait_action;
         public InputAction @undo_action => m_Wrapper.m_Player_undo_action;
+        public InputAction @previous_level => m_Wrapper.m_Player_previous_level;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -258,6 +280,9 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @undo_action.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUndo_action;
                 @undo_action.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUndo_action;
                 @undo_action.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUndo_action;
+                @previous_level.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPrevious_level;
+                @previous_level.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPrevious_level;
+                @previous_level.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPrevious_level;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -277,6 +302,9 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @undo_action.started += instance.OnUndo_action;
                 @undo_action.performed += instance.OnUndo_action;
                 @undo_action.canceled += instance.OnUndo_action;
+                @previous_level.started += instance.OnPrevious_level;
+                @previous_level.performed += instance.OnPrevious_level;
+                @previous_level.canceled += instance.OnPrevious_level;
             }
         }
     }
@@ -288,5 +316,6 @@ public class @InputActions : IInputActionCollection, IDisposable
         void OnNext_level(InputAction.CallbackContext context);
         void OnWait_action(InputAction.CallbackContext context);
         void OnUndo_action(InputAction.CallbackContext context);
+        void OnPrevious_level(InputAction.CallbackContext context);
     }
 }

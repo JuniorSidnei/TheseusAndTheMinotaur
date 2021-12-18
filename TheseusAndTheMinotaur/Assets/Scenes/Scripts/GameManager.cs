@@ -16,8 +16,9 @@ namespace TheseusAndMinotaur.Managers {
             MinotaurTurn
         }
 
-        public int CurrentLevel;
-        public int NextLevel;
+        public int CurrentLevelID;
+        public int NextLevelID;
+        public int PreviousLevelID;
         public TextMeshProUGUI TurnText;
         
         [Header("finish game settings")]
@@ -59,8 +60,14 @@ namespace TheseusAndMinotaur.Managers {
             //subscribe to wait event
             m_inputActions.Player.wait_action.performed += WaitAction;
             
-            //subscrite to undo action 
+            //subscribe to undo action 
             m_inputActions.Player.undo_action.performed += UndoAction;
+            
+            //subscribe to next level
+            m_inputActions.Player.next_level.performed += NextLevel;
+            
+            //subscribe to previous level
+            m_inputActions.Player.undo_action.performed += PreviousLevel;
             
             //subscribe finish turn event
             CharacterMovement.OnFinishTurn += OnFinishTurn;
@@ -80,7 +87,7 @@ namespace TheseusAndMinotaur.Managers {
         }
 
         private void RestartGame(InputAction.CallbackContext ctx) {
-            SceneManager.LoadScene(string.Format("Level_{0}", CurrentLevel));
+            SceneManager.LoadScene(string.Format("Level_{0}", CurrentLevelID));
             m_inputActions.Player.player_movement.Enable();
         }
 
@@ -92,6 +99,16 @@ namespace TheseusAndMinotaur.Managers {
 
         private void UndoAction(InputAction.CallbackContext ctx) {
             OnUndoMovementAction?.Invoke();
+        }
+
+        private void NextLevel(InputAction.CallbackContext ctx) {
+            SceneManager.LoadScene(string.Format("Level_{0}", NextLevelID));  
+        }
+        
+        private void PreviousLevel(InputAction.CallbackContext ctx) {
+            if (PreviousLevelID == 0) return;
+            
+            SceneManager.LoadScene(string.Format("Level_{0}", PreviousLevelID));  
         }
         
         private void InputMovement(InputAction.CallbackContext ctx) {
