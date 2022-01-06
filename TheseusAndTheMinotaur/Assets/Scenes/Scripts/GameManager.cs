@@ -43,16 +43,14 @@ namespace TheseusAndMinotaur.Managers {
         public static event OnMinotaurTurn OnMinotaurMoveTurn;
 
         private InputActions m_inputActions;
-
         private CharacterTurn m_characterTurn;
+        private float m_nextSenceTimer = 1f;
         
         private void Awake() {
             //create instance, new input action maps
             Instance = this;
             m_inputActions = new InputActions();
             m_inputActions.Enable();
-
-           
             
             m_characterTurn = CharacterTurn.TheseusTurn;
             TurnText.SetText("IT'S: " + m_characterTurn);
@@ -136,21 +134,13 @@ namespace TheseusAndMinotaur.Managers {
         }
 
         private void NextLevel(InputAction.CallbackContext ctx) {
-            if (NextLevelID == 0) {
-                NoLevelAdviseText.gameObject.SetActive(true);
-                Invoke("HideAdviseText", 0.2f);
-                return;
-            }
-            SceneManager.LoadScene(string.Format("Level_{0}", NextLevelID));  
+            m_inputActions.Player.Disable();
+            StartCoroutine(LoadNextLevel(NextLevelID));
         }
         
         private void PreviousLevel(InputAction.CallbackContext ctx) {
-            if (PreviousLevelID == 0) {
-                NoLevelAdviseText.gameObject.SetActive(true);
-                Invoke("HideAdviseText", 0.2f);
-                return;
-            }
-            SceneManager.LoadScene(string.Format("Level_{0}", PreviousLevelID));  
+            m_inputActions.Player.Disable();
+            StartCoroutine(LoadNextLevel(PreviousLevelID));
         }
         
         private void InputMovement(InputAction.CallbackContext ctx) {
@@ -169,19 +159,48 @@ namespace TheseusAndMinotaur.Managers {
         }
 
         private void OnMinotaurWins() {
-            m_inputActions.Player.player_movement.Disable();
+            m_inputActions.Player.Disable();
             Finish.gameObject.SetActive(true);
             FinishText.color = LooseTextColor;
             FinishText.text = "LOST - MINOTAUR GOT YOU!";
+            LoadLevelOnFinish(false, CurrentLevelID);
         }
 
         private void OnPlayerWins() {
-            m_inputActions.Player.player_movement.Disable();
+            m_inputActions.Player.Disable();
             Finish.gameObject.SetActive(true);
             FinishText.color = WinTextColor;
             FinishText.text = "WIN - YOU HAVE ESCAPED!";
+            LoadLevelOnFinish(true, NextLevelID);
+        }
+        
+
+        private void LoadLevelOnFinish(bool playerWin, int levelId) {
+            if (playerWin) {
+                StartCoroutine(LoadNextLevel(levelId));
+                return;
+            }
+
+            StartCoroutine(LoadNextLevel(levelId));
         }
 
+        private IEnumerator LoadNextLevel(int levelId) {
+            yield return new WaitForSeconds(m_nextSenceTimer);
+            
+            if (levelId == 0) {
+                ShowAdviseText();
+                yield break;
+            }
+            
+            SceneManager.LoadScene(string.Format("Level_{0}", levelId));
+        }
+
+        private void ShowAdviseText() {
+            m_inputActions.Player.Enable();
+            NoLevelAdviseText.gameObject.SetActive(true);
+            Invoke(nameof(HideAdviseText), 0.5f);
+        }
+        
         private void HideAdviseText() {
             NoLevelAdviseText.gameObject.SetActive(false);
         }
